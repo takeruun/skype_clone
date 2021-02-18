@@ -9,6 +9,7 @@ import 'package:skype_clone/resources/chat_methods.dart';
 import 'package:skype_clone/screens/chat_screens/chat_screen.dart';
 import 'package:skype_clone/screens/chat_screens/widgets/cached_image.dart';
 import 'package:skype_clone/screens/page_views/widgets/last_message_container.dart';
+import 'package:skype_clone/screens/page_views/widgets/online_dot_indicator.dart';
 import 'package:skype_clone/utils/universal_variables.dart';
 import 'package:skype_clone/widgets/custom_tile.dart';
 
@@ -69,19 +70,7 @@ class ViewLayout extends StatelessWidget {
               radius: 80,
               isRound: true,
             ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Container(
-                height: 13,
-                width: 13,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: UniversalVariables.onlineDotColor,
-                  border: Border.all(
-                      color: UniversalVariables.blackColor, width: 2),
-                ),
-              ),
-            )
+            OnlineDotIndicator(uid: contact.uid)
           ],
         ),
       ),

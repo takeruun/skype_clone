@@ -8,7 +8,7 @@ class UserProvider extends ChangeNotifier {
 
   model.User get getUser => _user;
 
-  void refreshUser() async {
+  Future<void> refreshUser() async {
     model.User user = await _authMethods.getUserDetails();
     _user = user;
     notifyListeners();

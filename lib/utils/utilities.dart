@@ -58,7 +58,7 @@ class Utils {
         return UserState.Offline;
 
       case 1:
-        return UserState.Offline;
+        return UserState.Online;
 
       default:
         return UserState.Waiting;

@@ -5,7 +5,7 @@ import 'package:skype_clone/provider/user_provider.dart';
 import 'package:skype_clone/resources/auth_methods.dart';
 import 'package:skype_clone/screens/chat_screens/widgets/cached_image.dart';
 import 'package:skype_clone/screens/login_screen.dart';
-import 'package:skype_clone/screens/page_views/widgets/shimmering_logo.dart';
+import 'package:skype_clone/screens/page_views/chats/widgets/shimmering_logo.dart';
 import 'package:skype_clone/widgets/appbar.dart';
 
 class UserDetailsContainer extends StatelessWidget {

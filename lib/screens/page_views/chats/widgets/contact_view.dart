@@ -4,13 +4,11 @@ import 'package:skype_clone/models/contact.dart';
 import 'package:skype_clone/models/user.dart' as model;
 import 'package:skype_clone/provider/user_provider.dart';
 import 'package:skype_clone/resources/auth_methods.dart';
-import 'package:skype_clone/resources/call_methods.dart';
 import 'package:skype_clone/resources/chat_methods.dart';
 import 'package:skype_clone/screens/chat_screens/chat_screen.dart';
 import 'package:skype_clone/screens/chat_screens/widgets/cached_image.dart';
-import 'package:skype_clone/screens/page_views/widgets/last_message_container.dart';
-import 'package:skype_clone/screens/page_views/widgets/online_dot_indicator.dart';
-import 'package:skype_clone/utils/universal_variables.dart';
+import 'package:skype_clone/screens/page_views/chats/widgets/last_message_container.dart';
+import 'package:skype_clone/screens/page_views/chats/widgets/online_dot_indicator.dart';
 import 'package:skype_clone/widgets/custom_tile.dart';
 
 class ContactView extends StatelessWidget {

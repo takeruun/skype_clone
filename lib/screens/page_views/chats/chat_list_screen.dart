@@ -1,56 +1,42 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skype_clone/models/contact.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skype_clone/provider/user_provider.dart';
-import 'package:skype_clone/resources/auth_methods.dart';
 import 'package:skype_clone/resources/chat_methods.dart';
-import 'package:skype_clone/screens/page_views/widgets/contact_view.dart';
-import 'package:skype_clone/screens/page_views/widgets/new_chat_button.dart';
-import 'package:skype_clone/screens/page_views/widgets/quiet_box.dart';
-import 'package:skype_clone/screens/page_views/widgets/user_circle.dart';
-import 'package:skype_clone/widgets/custom_tile.dart';
 import 'package:skype_clone/utils/universal_variables.dart';
-import 'package:skype_clone/widgets/appbar.dart';
+import 'package:skype_clone/models/contact.dart';
+import 'package:skype_clone/widgets/skype_appbar.dart';
+import 'package:skype_clone/screens/page_views/chats/widgets/user_circle.dart';
+import 'package:skype_clone/screens/page_views/chats/widgets/contact_view.dart';
+import 'package:skype_clone/screens/page_views/chats/widgets/new_chat_button.dart';
+import 'package:skype_clone/screens/page_views/chats/widgets/quiet_box.dart';
 
 class ChatListScreen extends StatelessWidget {
-  CustomAppBar customAppBar(BuildContext context) {
-    return CustomAppBar(
-      leading: IconButton(
-        icon: Icon(
-          Icons.notifications,
-          color: Colors.white,
-        ),
-        onPressed: () {},
-      ),
-      title: UserCircle(),
-      centerTitle: true,
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(
-            Icons.search,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pushNamed(context, '/search_screen');
-          },
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.more_vert,
-            color: Colors.white,
-          ),
-          onPressed: () {},
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: UniversalVariables.blackColor,
-      appBar: customAppBar(context),
+      appBar: SkypeAppBar(
+        title: UserCircle(),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, '/search_screen');
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.more_vert,
+              color: Colors.white,
+            ),
+            onPressed: () {},
+          ),
+        ],
+      ),
       floatingActionButton: NewChatButton(),
       body: ChatListContainer(),
     );

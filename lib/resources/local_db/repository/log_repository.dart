@@ -15,7 +15,7 @@ class LogRepository {
 
   static addLogs(Log log) => dbObject.addLogs(log);
 
-  static deleteLogs(int logId) => dbObject.deleteLods(logId);
+  static deleteLogs(int logId) => dbObject.deleteLogs(logId);
 
   static getLogs() => dbObject.getLogs();
 

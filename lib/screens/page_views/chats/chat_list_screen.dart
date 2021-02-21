@@ -58,7 +58,11 @@ class ChatListContainer extends StatelessWidget {
             var docList = snapshot.data.docs;
 
             if (docList.isEmpty) {
-              return QuietBox();
+              return QuietBox(
+                heading: 'This is where all the contacts are listed',
+                subtitle:
+                    'Search for your friends and family to start calling or chatting with them',
+              );
             }
             return ListView.builder(
               padding: EdgeInsets.all(10),

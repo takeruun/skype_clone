@@ -7,6 +7,7 @@ import 'package:skype_clone/models/log.dart';
 import 'package:skype_clone/resources/call_methods.dart';
 import 'package:skype_clone/resources/local_db/repository/log_repository.dart';
 import 'package:skype_clone/screens/call_screens/call_screen.dart';
+import 'package:skype_clone/screens/call_screens/phone_call_screen.dart';
 import 'package:skype_clone/screens/chat_screens/widgets/cached_image.dart';
 import 'package:skype_clone/utils/permissions.dart';
 
@@ -96,7 +97,9 @@ class _PickupScreenState extends State<PickupScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    CallScreen(call: widget.call),
+                                    widget.call.type == 'video'
+                                        ? CallScreen(call: widget.call)
+                                        : PhoneCallScreen(call: widget.call),
                               ),
                             )
                           : {};

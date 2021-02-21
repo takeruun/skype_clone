@@ -8,11 +8,12 @@ import 'package:skype_clone/models/user.dart';
 import 'package:skype_clone/resources/call_methods.dart';
 import 'package:skype_clone/resources/local_db/repository/log_repository.dart';
 import 'package:skype_clone/screens/call_screens/call_screen.dart';
+import 'package:skype_clone/screens/call_screens/phone_call_screen.dart';
 
 class CallUtils {
   static final CallMethods callMethods = CallMethods();
 
-  static dial({User from, User to, context}) async {
+  static dial({User from, User to, context, type}) async {
     Call call = Call(
       callerId: from.uid,
       callerName: from.name,
@@ -21,6 +22,7 @@ class CallUtils {
       receiverName: to.name,
       receiverPic: to.profilePhoto,
       channelId: Random().nextInt(1000).toString(),
+      type: type,
     );
 
     Log log = Log(
@@ -29,7 +31,7 @@ class CallUtils {
       callStatus: CALL_STATUS_DIALLED,
       receiverName: to.name,
       receiverPic: to.profilePhoto,
-      timestamp: Random().nextInt(1000).toString(),
+      timestamp: DateTime.now().toString(),
     );
 
     bool callMade = await callMethods.makeCall(call: call);
@@ -40,7 +42,10 @@ class CallUtils {
       LogRepository.addLogs(log);
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => CallScreen(call: call)),
+        MaterialPageRoute(
+            builder: (context) => type == CALL_TYPE_VIDEO
+                ? CallScreen(call: call)
+                : PhoneCallScreen(call: call)),
       );
     }
   }

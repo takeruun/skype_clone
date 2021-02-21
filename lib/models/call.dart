@@ -7,6 +7,7 @@ class Call {
   String receiverPic;
   String channelId;
   bool hasDialled;
+  String type;
 
   Call({
     this.callerId,
@@ -17,6 +18,7 @@ class Call {
     this.receiverPic,
     this.channelId,
     this.hasDialled,
+    this.type,
   });
 
   Map<String, dynamic> toMap() => {
@@ -27,7 +29,8 @@ class Call {
         'receiverName': receiverName,
         'receiverPic': receiverPic,
         'channelId': channelId,
-        'hasDialled': hasDialled
+        'hasDialled': hasDialled,
+        'type:': type,
       };
 
   Call.fromMap(Map<String, dynamic> callMap) {
@@ -39,5 +42,6 @@ class Call {
     this.receiverPic = callMap['receiverPic'];
     this.channelId = callMap['channelId'];
     this.hasDialled = callMap['hasDialled'];
+    this.type = callMap['type'];
   }
 }

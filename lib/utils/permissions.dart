@@ -12,7 +12,21 @@ class Permissions {
       return true;
     } else {
       _handleInvalidPermissions(
-          cameraPermissionStatus, microphonePermissionStatus);
+          cameraPermissionStatus: cameraPermissionStatus,
+          microphonePermissionStatus: microphonePermissionStatus);
+      return false;
+    }
+  }
+
+  static Future<bool> microphonePermissonsGranted() async {
+    PermissionStatus microphonePermissionStatus =
+        await _getMicrophonePermission();
+
+    if (microphonePermissionStatus == PermissionStatus.granted) {
+      return true;
+    } else {
+      _handleInvalidPermissions(
+          microphonePermissionStatus: microphonePermissionStatus);
       return false;
     }
   }
@@ -39,10 +53,10 @@ class Permissions {
     }
   }
 
-  static void _handleInvalidPermissions(
+  static void _handleInvalidPermissions({
     PermissionStatus cameraPermissionStatus,
     PermissionStatus microphonePermissionStatus,
-  ) async {
+  }) async {
     if (cameraPermissionStatus == PermissionStatus.denied &&
         microphonePermissionStatus == PermissionStatus.denied) {
       throw new PlatformException(

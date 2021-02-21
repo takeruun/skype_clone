@@ -11,3 +11,6 @@ const String MESSAGE_TYPE_IMAGE = 'image';
 const String CALL_STATUS_DIALLED = 'dialled';
 const String CALL_STATUT_RECEIVED = 'received';
 const String CALL_STATUS_MISSED = 'missed';
+
+const String CALL_TYPE_VIDEO = 'video';
+const String CALL_TYPE_VOICE = 'voice';

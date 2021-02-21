@@ -90,14 +90,6 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: customAppBar(context),
       body: Column(
         children: [
-          RaisedButton(
-            child: Text('Change View State'),
-            onPressed: () {
-              _imageUploadProvider.getViewState == ViewState.LOADING
-                  ? _imageUploadProvider.setToIdle()
-                  : _imageUploadProvider.setToLoading();
-            },
-          ),
           Flexible(
             child: messageList(),
           ),
@@ -471,14 +463,23 @@ class _ChatScreenState extends State<ChatScreen> {
           onPressed: () async =>
               await Permissions.cameraAndMicrophonePermissionsGranted()
                   ? CallUtils.dial(
-                      from: sender, to: widget.receiver, context: context)
+                      from: sender,
+                      to: widget.receiver,
+                      context: context,
+                      type: CALL_TYPE_VIDEO)
                   : {},
         ),
         IconButton(
           icon: Icon(
             Icons.phone,
           ),
-          onPressed: () {},
+          onPressed: () async => await Permissions.microphonePermissonsGranted()
+              ? CallUtils.dial(
+                  from: sender,
+                  to: widget.receiver,
+                  context: context,
+                  type: CALL_TYPE_VOICE)
+              : {},
         )
       ],
     );

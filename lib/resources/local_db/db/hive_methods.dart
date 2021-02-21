@@ -6,7 +6,10 @@ import 'package:skype_clone/models/log.dart';
 import 'package:skype_clone/resources/local_db/interface/log_interface.dart';
 
 class HiveMethods implements LogInterface {
-  String hive_box = 'Call_Logs';
+  String hive_box = '';
+
+  @override
+  openDb(dbName) => (hive_box = dbName);
 
   @override
   init() async {
@@ -17,13 +20,11 @@ class HiveMethods implements LogInterface {
   @override
   addLogs(Log log) async {
     var box = await Hive.openBox(hive_box);
-
     var logMap = log.toMap();
-
+    logMap['log_id'] = box.length + 1;
     int idOfInput = await box.add(logMap);
 
     close();
-
     return idOfInput;
   }
 

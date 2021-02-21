@@ -12,12 +12,12 @@ class SqliteMethods implements LogInterface {
   String tableName = 'Call_Logs';
 
   String id = 'log_id';
-  String callerName = 'caller_name;';
-  String callerPic = 'caller_pic;';
-  String receiverName = 'receiver_name;';
-  String receiverPic = 'receiver_pic;';
-  String callStatus = 'call_status;';
-  String timestamp = 'timestamp;';
+  String callerName = 'caller_name';
+  String callerPic = 'caller_pic';
+  String receiverName = 'receiver_name';
+  String receiverPic = 'receiver_pic';
+  String callStatus = 'call_status';
+  String timestamp = 'timestamp';
 
   Future<Database> get db async {
     if (_db != null) return _db;
@@ -26,6 +26,9 @@ class SqliteMethods implements LogInterface {
     _db = await init();
     return _db;
   }
+
+  @override
+  openDb(dbName) => (databaseName = dbName);
 
   @override
   init() async {
@@ -53,18 +56,7 @@ class SqliteMethods implements LogInterface {
   Future<List<Log>> getLogs() async {
     try {
       var dbClient = await db;
-      List<Map> maps = await dbClient.rawQuery(
-        tableName,
-        [
-          id,
-          callerName,
-          callerPic,
-          receiverName,
-          receiverPic,
-          callStatus,
-          timestamp,
-        ],
-      );
+      List<Map> maps = await dbClient.rawQuery('SELECT * FROM $tableName');
 
       List<Log> logList = [];
       if (maps.isNotEmpty) {
@@ -84,7 +76,7 @@ class SqliteMethods implements LogInterface {
   deleteLogs(int logId) async {
     var dbClient = await db;
     return await dbClient
-        .delete(tableName, where: '$id = ?', whereArgs: [logId]);
+        .delete(tableName, where: '$id = ?', whereArgs: [logId + 1]);
   }
 
   updateLogs(Log log) async {

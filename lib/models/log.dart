@@ -27,7 +27,7 @@ class Log {
         'timestamp': timestamp,
       };
 
-  factory Log.fromMap(Map<String, dynamic> logMap) => Log(
+  factory Log.fromMap(Map<dynamic, dynamic> logMap) => Log(
         logId: logMap['log_id'],
         callerName: logMap['caller_name'],
         callerPic: logMap['caller_pic'],

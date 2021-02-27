@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:provider/provider.dart';
 import 'package:skype_clone/provider/image_upload_provider.dart';
 import 'package:skype_clone/provider/user_provider.dart';
@@ -17,7 +18,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
   print("Handling a background message ${message.messageId}");
-  print('message: ${message.data}');
 }
 
 /// Create a [AndroidNotificationChannel] for heads up notifications
@@ -58,34 +58,7 @@ void main() async {
     sound: true,
   );
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    RemoteNotification notification = message.notification;
-    AndroidNotification android = message.notification?.android;
-
-    if (notification != null && android != null) {
-      flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              channel.description,
-              // TODO add a proper drawable resource to android, for now using
-              //      one that already exists in example app.
-              icon: 'launch_background',
-            ),
-          ));
-    }
-  });
-
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    print('A new onMessageOpenedApp event was published!  $message');
-  });
-
-  String token = await FirebaseMessaging.instance.getAPNSToken();
-  print('token: $token');
+  await DotEnv.load(fileName: '.env');
 
   runApp(MyApp());
 }
@@ -100,10 +73,27 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage message) {
-      print('message: ${message.data}');
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channel.description,
+              // TODO add a proper drawable resource to android, for now using
+              //      one that already exists in example app.
+              icon: 'launch_background',
+            ),
+          ),
+        );
+      }
     });
 
     super.initState();

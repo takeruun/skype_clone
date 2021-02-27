@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:skype_clone/constants/strings.dart';
@@ -70,6 +69,7 @@ class AuthMethods {
   }
 
   Future<void> addDataToDb(User currentUser) async {
+    String token = await FirebaseMessaging.instance.getToken();
     String username = Utils.getUsername(currentUser.email);
 
     model.User user = model.User(
@@ -80,10 +80,10 @@ class AuthMethods {
       username: username,
     );
 
-    firestore
-        .collection(USERS_COLLECTION)
-        .doc(currentUser.uid)
-        .set(user.toMap());
+    Map<String, dynamic> userMap = user.toMap();
+    userMap.addAll({'fcm_token': token});
+
+    firestore.collection(USERS_COLLECTION).doc(currentUser.uid).set(userMap);
   }
 
   Future<List<model.User>> fetchAllUsers(User currentUser) async {

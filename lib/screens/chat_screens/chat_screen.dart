@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker/emoji_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:skype_clone/constants/strings.dart';
@@ -21,6 +23,9 @@ import 'package:skype_clone/utils/universal_variables.dart';
 import 'package:skype_clone/utils/utilities.dart';
 import 'package:skype_clone/widgets/appbar.dart';
 import 'package:skype_clone/widgets/custom_tile.dart';
+import 'package:http/http.dart' as http;
+
+String key = env['SERVER_KEY'];
 
 class ChatScreen extends StatefulWidget {
   final model.User receiver;
@@ -429,6 +434,27 @@ class _ChatScreenState extends State<ChatScreen> {
     textEditingController.text = '';
 
     _chatMethods.addMessageToDb(_message, sender, widget.receiver);
+
+    try {
+      http.post(
+        'https://fcm.googleapis.com/fcm/send',
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'key=$key',
+        },
+        body: jsonEncode({
+          'to': widget.receiver.fcmToken,
+          'priority': 'high',
+          'notification': {
+            'title': 'skype',
+            'body': _message.message,
+          },
+          'data': {'user_uid': sender.uid}
+        }),
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 
   pickImage({@required ImageSource source}) async {

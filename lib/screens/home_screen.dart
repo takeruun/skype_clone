@@ -1,12 +1,15 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:skype_clone/enum/user_state.dart';
+import 'package:skype_clone/models/user.dart' as model;
 import 'package:skype_clone/provider/user_provider.dart';
 import 'package:skype_clone/resources/auth_methods.dart';
 import 'package:skype_clone/resources/local_db/repository/log_repository.dart';
 import 'package:skype_clone/screens/call_screens/pickup/pickup_layout.dart';
+import 'package:skype_clone/screens/chat_screens/chat_screen.dart';
 import 'package:skype_clone/screens/page_views/chats/chat_list_screen.dart';
 import 'package:skype_clone/screens/page_views/logs/log_screen.dart';
 import 'package:skype_clone/utils/universal_variables.dart';
@@ -20,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   PageController pageController;
   int _page = 0;
   final AuthMethods _authMethods = AuthMethods();
+  model.User _user;
 
   UserProvider userProvider;
 
@@ -39,6 +43,37 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
 
     pageController = PageController();
+
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage message) async {
+      if (message != null) {
+        _user = await _authMethods.getUserDetailsById(message.data['user_uid']);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              receiver: _user,
+            ),
+          ),
+        );
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      _user = await _authMethods.getUserDetailsById(message.data['user_uid']);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatScreen(
+            receiver: _user,
+          ),
+        ),
+      );
+      print('A new onMessageOpenedApp event was published!');
+    });
   }
 
   @override

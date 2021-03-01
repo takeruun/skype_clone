@@ -16,7 +16,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application
-        android:name="io.flutter.app.FlutterApplication"
+        android:name=".Application"
         android:label="skype_clone"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -6,6 +6,7 @@ class User {
   String status;
   int state;
   String profilePhoto;
+  String fcmToken;
 
   User({
     this.uid,
@@ -15,6 +16,7 @@ class User {
     this.status,
     this.state,
     this.profilePhoto,
+    this.fcmToken,
   });
 
   Map<String, dynamic> toMap() => {
@@ -25,6 +27,7 @@ class User {
         'status': status,
         'state': state,
         'profile_photo': profilePhoto,
+        'fcm_token': fcmToken
       };
 
   factory User.fromMap(Map<String, dynamic> mapData) => User(
@@ -35,5 +38,6 @@ class User {
         status: mapData['status'],
         state: mapData['state'],
         profilePhoto: mapData['profile_photo'],
+        fcmToken: mapData['fcm_token'],
       );
 }

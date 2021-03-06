@@ -10,7 +10,7 @@ object FirebaseCloudMessagingPluginRegistrant {
         }
         FlutterFirebaseMessagingPlugin.registerWith(
                 registry?.registrarFor(
-                        "io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"))
+                        "io.flutter.plugins.firebase.messaging.FirebaseMessagingPlugin"))
     }
 
     private fun alreadyRegisteredWith(registry: PluginRegistry?): Boolean {

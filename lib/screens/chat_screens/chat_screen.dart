@@ -437,7 +437,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       http.post(
-        'https://fcm.googleapis.com/fcm/send',
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'key=$key',

@@ -1,11 +1,25 @@
 package com.example.skype_clone
 
+import android.content.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.telecom.*
+import android.telecom.PhoneAccountHandle
+import android.telecom.TelecomManager
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import io.wazo.callkeep.Constants
+
+
+private const val TAG = "MyFirebaseMsgService"
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
-
+  private var telecomManager: TelecomManager? = null
+  private var phoneAccountHandle: PhoneAccountHandle? = null
   /**
    * Called when message is received.
    *
@@ -13,41 +27,41 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
    */
   // [START receive_message]
   override fun onMessageReceived(remoteMessage: RemoteMessage) {
-    // [START_EXCLUDE]
-    // There are two types of messages data messages and notification messages. Data messages are
-    // handled
-    // here in onMessageReceived whether the app is in the foreground or background. Data messages
-    // are the type
-    // traditionally used with GCM. Notification messages are only received here in
-    // onMessageReceived when the app
-    // is in the foreground. When the app is in the background an automatically generated
-    // notification is displayed.
-    // When the user taps on the notification they are returned to the app. Messages containing both
-    // notification
-    // and data payloads are treated as notification messages. The Firebase console always sends
-    // notification
-    // messages. For more see: https://firebase.google.com/docs/cloud-messaging/concept-options
-    // [END_EXCLUDE]
+    try {
+      registerPhoneAccount(this)
+      // VoiceConnectionService.setPhoneAccountHandle(phoneAccountHandle)
 
-    // TODO(developer): Handle FCM messages here.
-    // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
+      val extras = Bundle()
+      val uri = Uri.fromParts(PhoneAccount.SCHEME_TEL, "09022334455", null)
+      extras.putParcelable(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, uri)
+      extras.putString(Constants.EXTRA_CALLER_NAME, "callerName")
+      extras.putString(Constants.EXTRA_CALL_UUID, "uuid")
+      telecomManager!!.addNewIncomingCall(phoneAccountHandle, extras)
+    } catch (e: Exception) {
+      Log.e("error", e.toString())
+    }
     Log.d(TAG, "From: ${remoteMessage.from}")
-
-    // Check if message contains a data payload.
     if (remoteMessage.data.isNotEmpty()) {
       Log.d(TAG, "Message data payload: ${remoteMessage.data}")
     }
-
-    // Check if message contains a notification payload.
     remoteMessage.notification?.let { Log.d(TAG, "Message Notification Body: ${it.body}") }
-
-    // Also if you intend on generating your own notifications as a result of a received FCM
-    // message, here is where that should be initiated. See sendNotification method below.
   }
   // [END receive_message]
+  private fun registerPhoneAccount(context: Context) {
+    telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+    val componentName = ComponentName(context, CallConnectionService::class.java)
+    phoneAccountHandle = PhoneAccountHandle(componentName, "Admin")
+    val phoneAccount =
+        PhoneAccount.builder(phoneAccountHandle, "Admin")
+            .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED)
+            .build()
 
-  companion object {
-
-    private const val TAG = "MyFirebaseMsgService"
+    telecomManager!!.registerPhoneAccount(phoneAccount)
+    val intent = Intent()
+    intent.component =
+        ComponentName(
+            "com.android.server.telecom",
+            "com.android.server.telecom.settings.EnableAccountPreferenceActivity")
+    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
   }
 }

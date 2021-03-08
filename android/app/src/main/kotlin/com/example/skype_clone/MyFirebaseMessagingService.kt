@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.telecom.*
 import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
+import android.telephony.TelephonyManager
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -20,6 +21,7 @@ private const val TAG = "MyFirebaseMsgService"
 class MyFirebaseMessagingService : FirebaseMessagingService() {
   private var telecomManager: TelecomManager? = null
   private var phoneAccountHandle: PhoneAccountHandle? = null
+  private var telephony: TelephonyManager? = null
   /**
    * Called when message is received.
    *
@@ -35,7 +37,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
       val uri = Uri.fromParts(PhoneAccount.SCHEME_TEL, "09022334455", null)
       extras.putParcelable(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, uri)
       extras.putString(Constants.EXTRA_CALLER_NAME, "callerName")
-      extras.putString(Constants.EXTRA_CALL_UUID, "uuid")
+      extras.putString(Constants.EXTRA_CALL_UUID, "019100-192819")
       telecomManager!!.addNewIncomingCall(phoneAccountHandle, extras)
     } catch (e: Exception) {
       Log.e("error", e.toString())
@@ -63,5 +65,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             "com.android.server.telecom",
             "com.android.server.telecom.settings.EnableAccountPreferenceActivity")
     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+    telephony = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
   }
 }

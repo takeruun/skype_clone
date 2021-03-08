@@ -23,15 +23,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.wazo.callkeep.Constants.*
 
 @RequiresApi(Build.VERSION_CODES.M)
-class CallConnection(ctx: Context) : Connection() {
+class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection() {
   val NOTIFICATION_CHANNEL_ID = "10001"
   private var isMuted = false
-  //private var handle: HashMap<String, String>
+  private var handle: HashMap<String, String>? = null
   private var ctx: Context = ctx
   val TAG = "CallConnection"
 
   init {
-    /*
     this.handle = handle
     this.ctx = ctx
 
@@ -44,7 +43,7 @@ class CallConnection(ctx: Context) : Connection() {
     if (name != null && name != "") {
       setCallerDisplayName(name, TelecomManager.PRESENTATION_ALLOWED)
     }
-    */
+
   }
 
   override fun onShowIncomingCallUi() {
@@ -105,8 +104,8 @@ class CallConnection(ctx: Context) : Connection() {
     connectionCapabilities = connectionCapabilities or CAPABILITY_HOLD
     audioModeIsVoip = true
 
-    //sendCallRequestToActivity(ACTION_ANSWER_CALL, handle)
-    //sendCallRequestToActivity(ACTION_AUDIO_SESSION, handle)
+    sendCallRequestToActivity(ACTION_ANSWER_CALL, handle)
+    sendCallRequestToActivity(ACTION_AUDIO_SESSION, handle)
     Log.d(TAG, "onAnswer executed")
   }
 
@@ -115,9 +114,9 @@ class CallConnection(ctx: Context) : Connection() {
     Log.i(TAG, "onDisconnect")
     super.onDisconnect()
     setDisconnected(DisconnectCause(DisconnectCause.LOCAL))
-    //sendCallRequestToActivity(ACTION_END_CALL, handle)
+    sendCallRequestToActivity(ACTION_END_CALL, handle)
     try {
-    //  (ctx as CallConnectionService).deinitConnection(handle[EXTRA_CALL_UUID]!!)
+      CallConnectionService.deinitConnection(handle?.get(EXTRA_CALL_UUID))
     } catch (exception: Throwable) {
       Log.e(TAG, "Handle map error", exception)
     }
@@ -128,13 +127,13 @@ class CallConnection(ctx: Context) : Connection() {
     Log.i(TAG, "onHold")
     super.onHold()
     this.setOnHold();
-   // sendCallRequestToActivity(ACTION_HOLD_CALL, handle);
+    sendCallRequestToActivity(ACTION_HOLD_CALL, handle);
   }
 
   override fun onUnhold() {
     super.onUnhold()
     Log.i(TAG, "onUnhold")
-   // sendCallRequestToActivity(ACTION_UNHOLD_CALL, handle);
+    sendCallRequestToActivity(ACTION_UNHOLD_CALL, handle);
     setActive();
   }
 
@@ -142,10 +141,10 @@ class CallConnection(ctx: Context) : Connection() {
     super.onReject()
     Log.i(TAG, "onReject")
     setDisconnected(DisconnectCause(DisconnectCause.REJECTED))
-   // sendCallRequestToActivity(ACTION_END_CALL, handle)
+    sendCallRequestToActivity(ACTION_END_CALL, handle)
     Log.d(TAG, "onReject executed")
     try {
-     // (ctx as CallConnectionService).deinitConnection(handle[EXTRA_CALL_UUID]!!)
+     CallConnectionService.deinitConnection(handle?.get(EXTRA_CALL_UUID))
     } catch (exception: Throwable) {
       Log.e(TAG, "Handle map error", exception)
     }

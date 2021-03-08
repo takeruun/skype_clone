@@ -3,6 +3,7 @@ package com.example.skype_clone
 import android.Manifest
 import android.app.Activity
 import android.app.NotificationManager
+import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -20,11 +21,10 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import io.wazo.callkeep.Constants
-import com.example.skype_clone.CallConnectionService
 
 
 class IncomingCallActivity : Activity() {
-    private val mSharedPreferences: SharedPreferences? = null
+    private var sharedPreferences: SharedPreferences? = null
     private var username: String? = null
     private var callUser: String? = null
     private val TAG = "IncomingCallActivity"
@@ -36,16 +36,17 @@ class IncomingCallActivity : Activity() {
 
 
     public override fun onCreate(savedInstanceState: Bundle?) {
+        sharedPreferences = this.getSharedPreferences(com.example.skype_clone.Constants.SKYPE_PREF, Context.MODE_PRIVATE)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_incoming_call)
-        val extras = Bundle()
         username = "userName"
 
         // set this flag so this activity will stay in front of the keyguard
         val flags = WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
         window.addFlags(flags)
-        callUser = extras.getString(Constants.EXTRA_CALLER_NAME)
+        callUser = sharedPreferences!!.getString(Constants.EXTRA_CALLER_NAME, "")
+
         Log.wtf(TAG, "username: $username")
         Log.wtf(TAG, "callUser: $callUser")
         mCallerID = findViewById<View>(R.id.caller_id) as TextView
@@ -84,6 +85,7 @@ class IncomingCallActivity : Activity() {
      */
     @RequiresApi(Build.VERSION_CODES.M)
     fun rejectCall(view: View?) {
+        Log.d(TAG, "endCall executed")
         /*
         JSONObject hangupMsg = PnPeerConnectionClient.generateHangupPacket(this.username);
         this.mPubNub.publish(this.callUser,hangupMsg, new Callback() {
@@ -93,9 +95,9 @@ class IncomingCallActivity : Activity() {
             }
         });
         */
-        val conn = CallConnectionService().getConnection("019100-192819") ?: return
+        val conn = CallConnectionService.getConnection("019100-192819") ?: return
         conn.onDisconnect()
-        Log.d(TAG, "endCall executed")
+
         notifManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notifManager!!.cancelAll()
         finish()

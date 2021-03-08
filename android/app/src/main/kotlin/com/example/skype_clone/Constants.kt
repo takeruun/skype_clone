@@ -21,4 +21,6 @@ object Constants {
     const val CALL_ID = "CALL_ID"
     const val WITH_VIDEO = "WITH_VIDEO"
     const val CALL_ANSWERED = 1
+
+    const val SKYPE_PREF = "SKYPE_PREF"
 }

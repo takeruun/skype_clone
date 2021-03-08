@@ -14,7 +14,6 @@ import androidx.annotation.RequiresApi
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.wazo.callkeep.Constants.*
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 private const val TAG = "CallConnectionService"
@@ -28,16 +27,14 @@ class CallConnectionService : ConnectionService() {
   private var currentConnectionRequest: ConnectionRequest?
   private var phoneAccountHandle: PhoneAccountHandle? = null
   val currentConnectionService: CallConnectionService
-  val currentConnections: HashMap<String, CallConnection> = HashMap()
-  var hasOutgoingCall = false
 
   init {
-    Log.e(TAG, "Constructor");
-    isReachable = false;
-    isInitialized = false;
-    isAvailable = false;
-    currentConnectionRequest = null;
-    currentConnectionService = this;
+    Log.e(TAG, "Constructor")
+    isReachable = false
+    isInitialized = false
+    isAvailable = false
+    currentConnectionRequest = null
+    currentConnectionService = this
   }
 
   fun setPhoneAccountHandle(phoneAccountHandle: PhoneAccountHandle?) {
@@ -58,53 +55,61 @@ class CallConnectionService : ConnectionService() {
     this.currentConnectionRequest = null
   }
 
-  fun getConnection(connectionId: String?): CallConnection? {
-    return if (currentConnections.containsKey(connectionId)) {
-      currentConnections.get(connectionId)
-    } else null
-  }
+  companion object {
+    var currentConnections: HashMap<String, CallConnection> = HashMap()
+    var hasOutgoingCall = false
 
-  fun deinitConnection(connectionId: String) {
-    Log.d(TAG, "deinitConnection:$connectionId")
-    this.hasOutgoingCall = false
-    if (currentConnections.containsKey(connectionId)) {
-      currentConnections.remove(connectionId)
+    fun getConnection(connectionId: String?): Connection? {
+      return if (currentConnections.containsKey(connectionId)) {
+        currentConnections[connectionId]
+      } else null
+    }
+
+    fun deinitConnection(connectionId: String?) {
+      Log.d(TAG, "deinitConnection:$connectionId")
+      hasOutgoingCall = false
+      if (currentConnections.containsKey(connectionId)) {
+        currentConnections.remove(connectionId)
+      }
     }
   }
 
   override fun onCreateOutgoingConnection(
-          connectionManagerPhoneAccount: PhoneAccountHandle?,
-          request: ConnectionRequest
+      connectionManagerPhoneAccount: PhoneAccountHandle?,
+      request: ConnectionRequest
   ): Connection {
     Log.i(TAG, "onCreateOutgoingConnection")
-    this.hasOutgoingCall = true;
+    hasOutgoingCall = true
     val uuid: String = UUID.randomUUID().toString()
     if (!isInitialized && !isReachable) {
-      this.notReachableCallUuid = uuid;
-      this.currentConnectionRequest = request;
-      this.checkReachability();
+      this.notReachableCallUuid = uuid
+      this.currentConnectionRequest = request
+      this.checkReachability()
     }
 
-    return this.makeOutgoingCall(request, uuid, false);
+    return this.makeOutgoingCall(request, uuid, false)
   }
 
   override fun onCreateOutgoingConnectionFailed(
-          connectionManagerPhoneAccount: PhoneAccountHandle?,
-          request: ConnectionRequest?
+      connectionManagerPhoneAccount: PhoneAccountHandle?,
+      request: ConnectionRequest?
   ) {
     super.onCreateOutgoingConnectionFailed(connectionManagerPhoneAccount, request)
     Log.i(TAG, "create outgoing call failed")
   }
 
   override fun onCreateIncomingConnection(
-          connectionManagerPhoneAccount: PhoneAccountHandle?,
-          request: ConnectionRequest
+      connectionManagerPhoneAccount: PhoneAccountHandle?,
+      request: ConnectionRequest
   ): Connection {
     Log.i(TAG, "onCreateIncomingConnection")
     val extra = request.extras
     val number: Uri = request.address
     val name = extra.getString(EXTRA_CALLER_NAME)
     val incomingCallConnection = createConnection(request)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+      incomingCallConnection.connectionProperties = Connection.PROPERTY_SELF_MANAGED
+    }
     incomingCallConnection.setRinging()
     incomingCallConnection.setActive()
 
@@ -112,14 +117,18 @@ class CallConnectionService : ConnectionService() {
   }
 
   override fun onCreateIncomingConnectionFailed(
-          connectionManagerPhoneAccount: PhoneAccountHandle?,
-          request: ConnectionRequest?
+      connectionManagerPhoneAccount: PhoneAccountHandle?,
+      request: ConnectionRequest?
   ) {
     super.onCreateIncomingConnectionFailed(connectionManagerPhoneAccount, request)
     Log.i(TAG, "create outgoing call failed ")
   }
 
-  private fun makeOutgoingCall(request: ConnectionRequest, uuid: String, forceWakeUp: Boolean): Connection {
+  private fun makeOutgoingCall(
+      request: ConnectionRequest,
+      uuid: String,
+      forceWakeUp: Boolean
+  ): Connection {
     val extras = request.extras
     val outgoingCallConnection: Connection
     val number = request.address.schemeSpecificPart
@@ -131,29 +140,31 @@ class CallConnectionService : ConnectionService() {
 
     // Wakeup application if needed
     if (!isForeground || forceWakeUp) {
-      Log.d(TAG, "onCreateOutgoingConnection: Waking up application");
-      this.wakeUpApplication(uuid, number, displayName!!);
+      Log.d(TAG, "onCreateOutgoingConnection: Waking up application")
+      this.wakeUpApplication(uuid, number, displayName!!)
     } else if (!this.canMakeOutgoingCall() && isReachable) {
-      Log.d(TAG, "onCreateOutgoingConnection: not available");
-      return Connection.createFailedConnection(DisconnectCause(DisconnectCause.LOCAL));
+      Log.d(TAG, "onCreateOutgoingConnection: not available")
+      return Connection.createFailedConnection(DisconnectCause(DisconnectCause.LOCAL))
     }
 
     // TODO: Hold all other calls
     if (extrasNumber == null || !extrasNumber.equals(number)) {
-      extras.putString(EXTRA_CALL_UUID, uuid);
-      extras.putString(EXTRA_CALLER_NAME, displayName);
-      extras.putString(EXTRA_CALL_NUMBER, number);
+      extras.putString(EXTRA_CALL_UUID, uuid)
+      extras.putString(EXTRA_CALLER_NAME, displayName)
+      extras.putString(EXTRA_CALL_NUMBER, number)
     }
 
-    outgoingCallConnection = createConnection(request);
-    outgoingCallConnection.setDialing();
-    outgoingCallConnection.setAudioModeIsVoip(true);
-    outgoingCallConnection.setCallerDisplayName(displayName, TelecomManager.PRESENTATION_ALLOWED);
+    outgoingCallConnection = createConnection(request)
+    outgoingCallConnection.setDialing()
+    outgoingCallConnection.setAudioModeIsVoip(true)
+    outgoingCallConnection.setCallerDisplayName(displayName, TelecomManager.PRESENTATION_ALLOWED)
 
-    // ‍️Weirdly on some Samsung phones (A50, S9...) using `setInitialized` will not display the native UI ...
-    // when making a call from the native Phone application. The call will still be displayed correctly without it.
+    // ‍️Weirdly on some Samsung phones (A50, S9...) using `setInitialized` will not display the
+    // native UI ...
+    // when making a call from the native Phone application. The call will still be displayed
+    // correctly without it.
     if (!Build.MANUFACTURER.equals("Samsung", ignoreCase = true)) {
-      outgoingCallConnection.setInitialized();
+      outgoingCallConnection.setInitialized()
     }
 
     val extrasMap = bundleToMap(extras)
@@ -164,7 +175,6 @@ class CallConnectionService : ConnectionService() {
     Log.d(TAG, "onCreateOutgoingConnection: calling")
 
     return outgoingCallConnection
-
   }
 
   private fun wakeUpApplication(uuid: String, number: String, displayName: String) {
@@ -179,15 +189,14 @@ class CallConnectionService : ConnectionService() {
     val extras: Bundle = request.extras
     val extrasMap: HashMap<String, String>? = this.bundleToMap(extras)
     extrasMap!![EXTRA_CALL_NUMBER] = request.address.toString()
-    val connection = CallConnection(applicationContext)
+    val connection = CallConnection(applicationContext, extrasMap)
 
-    //connection.connectionCapabilities = Connection.CAPABILITY_MUTE or Connection.CAPABILITY_SUPPORT_HOLD
+    connection.connectionCapabilities =
+        Connection.CAPABILITY_MUTE or Connection.CAPABILITY_SUPPORT_HOLD
     connection.setAddress(request!!.address, TelecomManager.PRESENTATION_ALLOWED)
     connection.setInitializing()
-    //connection.setExtras(extras)
-    //currentConnections.plus(Pair(extras.getString(EXTRA_CALL_UUID), connection))
-
-    // Get other connections for conferencing
+    connection.setExtras(extras)
+    currentConnections.put(extras.getString(EXTRA_CALL_UUID)!!, connection)
 
     // Get other connections for conferencing
     val otherConnections: MutableMap<String, CallConnection> = HashMap()
@@ -196,8 +205,8 @@ class CallConnectionService : ConnectionService() {
         otherConnections[key] = value
       }
     }
-    //val conferenceConnections: List<Connection> = ArrayList<Connection>(otherConnections.values)
-    //connection.setConferenceableConnections(conferenceConnections)
+    val conferenceConnections: List<Connection> = ArrayList<Connection>(otherConnections.values)
+    connection.setConferenceableConnections(conferenceConnections)
 
     return connection
   }
@@ -231,7 +240,8 @@ class CallConnectionService : ConnectionService() {
     Log.d(TAG, "checkReachability")
     val instance: CallConnectionService = this
     sendCallRequestToActivity(ACTION_CHECK_REACHABILITY, null)
-    Handler().postDelayed(
+    Handler()
+        .postDelayed(
             { instance.wakeUpAfterReachabilityTimeout(this.currentConnectionRequest!!) }, 2000)
   }
 
@@ -239,18 +249,22 @@ class CallConnectionService : ConnectionService() {
     return isAvailable
   }
 
-  private fun sendCallRequestToActivity(action: String, @Nullable attributeMap: HashMap<String, String>?) {
+  private fun sendCallRequestToActivity(
+      action: String,
+      @Nullable attributeMap: HashMap<String, String>?
+  ) {
     val instance: CallConnectionService = this
     val handler = Handler()
-    handler.post(Runnable {
-      val intent = Intent(action)
-      if (attributeMap != null) {
-        val extras = Bundle()
-        extras.putSerializable("attributeMap", attributeMap)
-        intent.putExtras(extras)
-      }
-      LocalBroadcastManager.getInstance(instance).sendBroadcast(intent)
-    })
+    handler.post(
+        Runnable {
+          val intent = Intent(action)
+          if (attributeMap != null) {
+            val extras = Bundle()
+            extras.putSerializable("attributeMap", attributeMap)
+            intent.putExtras(extras)
+          }
+          LocalBroadcastManager.getInstance(instance).sendBroadcast(intent)
+        })
   }
 
   /**
@@ -260,10 +274,13 @@ class CallConnectionService : ConnectionService() {
    * @return boolean
    */
   fun isRunning(context: Context): Boolean {
-    val activityManager: ActivityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    val tasks: List<ActivityManager.RunningTaskInfo> = activityManager.getRunningTasks(Int.MAX_VALUE)
+    val activityManager: ActivityManager =
+        context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val tasks: List<ActivityManager.RunningTaskInfo> =
+        activityManager.getRunningTasks(Int.MAX_VALUE)
     for (task in tasks) {
-      if (context.getPackageName().equals(task.baseActivity?.getPackageName(), ignoreCase = true)) return true
+      if (context.getPackageName().equals(task.baseActivity?.getPackageName(), ignoreCase = true))
+          return true
     }
     return false
   }

@@ -66,7 +66,6 @@ class CallConnectionService : ConnectionService() {
     }
 
     fun deinitConnection(connectionId: String?) {
-      Log.d(TAG, "deinitConnection:$connectionId")
       hasOutgoingCall = false
       if (currentConnections.containsKey(connectionId)) {
         currentConnections.remove(connectionId)

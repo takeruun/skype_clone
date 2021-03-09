@@ -25,9 +25,10 @@ import io.wazo.callkeep.Constants.*
 @RequiresApi(Build.VERSION_CODES.M)
 class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection() {
   val NOTIFICATION_CHANNEL_ID = "10001"
+  val NOTIFICATION_ID = 10001
   private var isMuted = false
   private var handle: HashMap<String, String>? = null
-  private var ctx: Context = ctx
+  private val ctx: Context
   val TAG = "CallConnection"
 
   init {
@@ -49,11 +50,16 @@ class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection
   override fun onShowIncomingCallUi() {
     Log.i(TAG, "onShowIncomingCallUi")
     val intent = Intent(Intent.ACTION_MAIN, null)
-    val fakeIntent = Intent()
+    val dismissButtonIntent = Intent(ctx, DismissButtonReceiver::class.java)
+    dismissButtonIntent.putExtra("NOTIFICATION_ID", NOTIFICATION_ID)
+
     intent.flags = Intent.FLAG_ACTIVITY_NO_USER_ACTION or Intent.FLAG_ACTIVITY_NEW_TASK
     intent.setClass(ctx, IncomingCallActivity::class.java!!)
+    intent.putExtra("NOTIFICATION_ID", NOTIFICATION_ID)
+
     val pendingIntent = PendingIntent.getActivity(ctx, 1, intent, 0)
-    val pendingIntent2 = PendingIntent.getActivity(ctx, 1, fakeIntent, PendingIntent.FLAG_ONE_SHOT)
+    val pendingIntent2 = PendingIntent.getBroadcast(ctx, 0, dismissButtonIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
     val builder = NotificationCompat.Builder(ctx, NOTIFICATION_CHANNEL_ID)
     builder.setOngoing(true)
     builder.setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -74,6 +80,7 @@ class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection
     // Use builder.addAction(..) to add buttons to answer or reject the call.
     val acceptAction = NotificationCompat.Action.Builder(R.drawable.ic_action_call, "Accept", pendingIntent)
             .build()
+
     val declineAction = NotificationCompat.Action.Builder(R.drawable.ic_action_end_call, "Decline", pendingIntent2)
             .build()
     builder.addAction(acceptAction)
@@ -91,7 +98,7 @@ class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection
       builder.setChannelId(NOTIFICATION_CHANNEL_ID)
       notificationManager.createNotificationChannel(notificationChannel)
     }
-    notificationManager.notify("Call Notification", 37, builder.build())
+    notificationManager.notify("Call Notification", NOTIFICATION_ID, builder.build())
   }
 
   override fun onCallAudioStateChanged(state: CallAudioState?) {

@@ -24,6 +24,7 @@ import io.wazo.callkeep.Constants.*
 
 @RequiresApi(Build.VERSION_CODES.M)
 class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection() {
+
   val NOTIFICATION_CHANNEL_ID = "10001"
   val NOTIFICATION_ID = 10001
   private var isMuted = false
@@ -47,6 +48,7 @@ class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection
 
   }
 
+  @RequiresApi(Build.VERSION_CODES.O)
   override fun onShowIncomingCallUi() {
     Log.i(TAG, "onShowIncomingCallUi")
     val intent = Intent(Intent.ACTION_MAIN, null)
@@ -76,6 +78,7 @@ class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection
     builder.setContentTitle("Your notification title")
     builder.setContentText("Your notification content.")
     builder.setAutoCancel(true)
+    //builder.setNotificationSilent()
 
     // Use builder.addAction(..) to add buttons to answer or reject the call.
     val acceptAction = NotificationCompat.Action.Builder(R.drawable.ic_action_call, "Accept", pendingIntent)
@@ -90,11 +93,6 @@ class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       val importance = NotificationManager.IMPORTANCE_HIGH
       val notificationChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance)
-      val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-      notificationChannel.setSound(ringtoneUri, AudioAttributes.Builder()
-              .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
-              .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-              .build())
       builder.setChannelId(NOTIFICATION_CHANNEL_ID)
       notificationManager.createNotificationChannel(notificationChannel)
     }
@@ -119,7 +117,6 @@ class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection
   override fun onDisconnect() {
     super.onDisconnect()
     Log.i(TAG, "onDisconnect")
-    super.onDisconnect()
     setDisconnected(DisconnectCause(DisconnectCause.LOCAL))
     sendCallRequestToActivity(ACTION_END_CALL, handle)
     try {

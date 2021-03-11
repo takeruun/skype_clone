@@ -29,7 +29,7 @@ class CallConnectionService : ConnectionService() {
   val currentConnectionService: CallConnectionService
 
   init {
-    Log.e(TAG, "Constructor")
+    Log.d(TAG, "Constructor")
     isReachable = false
     isInitialized = false
     isAvailable = false
@@ -97,6 +97,7 @@ class CallConnectionService : ConnectionService() {
     Log.i(TAG, "create outgoing call failed")
   }
 
+  @RequiresApi(Build.VERSION_CODES.Q)
   override fun onCreateIncomingConnection(
       connectionManagerPhoneAccount: PhoneAccountHandle?,
       request: ConnectionRequest
@@ -110,7 +111,11 @@ class CallConnectionService : ConnectionService() {
       incomingCallConnection.connectionProperties = Connection.PROPERTY_SELF_MANAGED
     }
     incomingCallConnection.setRinging()
-    incomingCallConnection.setActive()
+    //incomingCallConnection.onSilence()
+    incomingCallConnection.setInitialized()
+
+    //val soundIntent = Intent(this, RingSoundService::class.java)
+    //startService(soundIntent)
 
     return incomingCallConnection
   }

@@ -1,38 +1,42 @@
 package com.example.skype_clone
 
-import android.Manifest
-import android.app.Activity
+import android.app.ActivityManager
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
+import android.media.Ringtone
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.telecom.PhoneAccount
-import android.telecom.TelecomManager
-import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
+import androidx.fragment.app.FragmentActivity
 import io.flutter.app.FlutterActivity
 import io.wazo.callkeep.Constants
 
+class IncomingCallActivity : FragmentActivity() {
+    private val TAG = "IncomingCallActivity"
 
-class IncomingCallActivity : FlutterActivity() {
     private var sharedPreferences: SharedPreferences? = null
     private var username: String? = null
     private var callUser: String? = null
-    private val TAG = "IncomingCallActivity"
 
     //private Pubnub mPubNub;
     private var mCallerID: TextView? = null
-    private var notifManager: NotificationManager? = null
+
+    private var notifyManager: NotificationManager? = null
+
+    init {
+        Log.d(TAG, "Constructor")
+    }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         sharedPreferences = this.getSharedPreferences(com.example.skype_clone.Constants.SKYPE_PREF, Context.MODE_PRIVATE)
@@ -44,17 +48,16 @@ class IncomingCallActivity : FlutterActivity() {
         // set this flag so this activity will stay in front of the keyguard
         val flags = WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
         window.addFlags(flags)
-        callUser = sharedPreferences!!.getString(Constants.EXTRA_CALLER_NAME, "")
+        callUser = sharedPreferences!!.getString(Constants.EXTRA_CALLER_NAME, "caller nameq")
 
         Log.wtf(TAG, "username: $username")
         Log.wtf(TAG, "callUser: $callUser")
-        mCallerID = findViewById<View>(R.id.caller_id) as TextView
+        mCallerID = findViewById<View>(R.id.caller_name) as TextView
         mCallerID!!.text = callUser
 
         val notificationChannelId = this.intent!!.extras?.getInt("NOTIFICATION_ID")
-        Log.d(TAG, "${notificationChannelId}")
-        notifManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notifManager!!.cancelAll()
+        notifyManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notifyManager!!.cancelAll()
 
         //this.mPubNub  = new Pubnub(Constants.PUB_KEY, Constants.SUB_KEY);
         //this.mPubNub.setUUID(this.username);
@@ -81,6 +84,8 @@ class IncomingCallActivity : FlutterActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     fun acceptCall(view: View?) {
         Log.d(TAG, "acceptCall")
+        val fragment = getSupportFragmentManager()
+        Log.d(TAG, "${fragment.popBackStackImmediate()}")
     }
 
     /**
@@ -101,13 +106,14 @@ class IncomingCallActivity : FlutterActivity() {
         */
         val conn = CallConnectionService.getConnection("019100-192819") ?: return
         conn.onDisconnect()
-
+        //stopService(Intent(applicationContext, RingSoundService::class.java))
         finish()
     }
 
     public override fun onStop() {
         super.onStop()
         Log.i(TAG, "onStop")
+        //stopService(Intent(applicationContext, RingSoundService::class.java))
         /*
         if(this.mPubNub!=null){
             this.mPubNub.unsubscribeAll();
@@ -118,5 +124,6 @@ class IncomingCallActivity : FlutterActivity() {
     public override fun onDestroy() {
         super.onDestroy()
         Log.i(TAG, "onDestroy")
+        //stopService(Intent(applicationContext, RingSoundService::class.java))
     }
 }

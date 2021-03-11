@@ -1,4 +1,4 @@
-package com.example.skype_clone
+package com.example.skype_clone.call_service
 
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.example.skype_clone.call_service.CallConnectionService
 
 @RequiresApi(Build.VERSION_CODES.M)
 class DismissButtonReceiver: BroadcastReceiver() {

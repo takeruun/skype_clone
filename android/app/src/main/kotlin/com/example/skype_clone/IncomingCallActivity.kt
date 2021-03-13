@@ -84,8 +84,7 @@ class IncomingCallActivity : FragmentActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     fun acceptCall(view: View?) {
         Log.d(TAG, "acceptCall")
-        val fragment = getSupportFragmentManager()
-        Log.d(TAG, "${fragment.popBackStackImmediate()}")
+        CallEventPlugin.getStatu()
     }
 
     /**

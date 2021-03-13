@@ -51,6 +51,13 @@ class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection
   @RequiresApi(Build.VERSION_CODES.O)
   override fun onShowIncomingCallUi() {
     Log.i(TAG, "onShowIncomingCallUi")
+    /*
+    flutter アプリ起動
+    var i = Intent(Intent.ACTION_VIEW, Uri.parse("com.example://skype_clone"))
+    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    ctx.startActivity(i)
+     */
+
     val intent = Intent(Intent.ACTION_MAIN, null)
     val dismissButtonIntent = Intent(ctx, DismissButtonReceiver::class.java)
     dismissButtonIntent.putExtra("NOTIFICATION_ID", NOTIFICATION_ID)
@@ -78,7 +85,7 @@ class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection
     builder.setContentTitle("Your notification title")
     builder.setContentText("Your notification content.")
     builder.setAutoCancel(true)
-    //builder.setNotificationSilent()
+    //builder.setNotificationSilent() 通知表示せず IncomingCallActivity起動
 
     // Use builder.addAction(..) to add buttons to answer or reject the call.
     val acceptAction = NotificationCompat.Action.Builder(R.drawable.ic_action_call, "Accept", pendingIntent)

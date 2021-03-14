@@ -10,8 +10,9 @@ import android.net.Uri
 import android.os.IBinder
 import android.util.Log
 
+private const val TAG = "RingSoundService"
+
 class RingSoundService : Service() {
-    private val TAG = "RingSoundService"
     private var sound: Ringtone? = null
 
     override fun onBind(intent: Intent): IBinder {

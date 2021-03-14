@@ -28,6 +28,8 @@ import com.example.skype_clone.callkeep.Constants.EXTRA_CALLER_NAME
 import com.example.skype_clone.callkeep.Constants.EXTRA_CALL_NUMBER
 import com.example.skype_clone.callkeep.Constants.EXTRA_CALL_UUID
 
+private const val TAG = "CallConnection"
+
 @RequiresApi(Build.VERSION_CODES.M)
 class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection() {
 
@@ -36,7 +38,6 @@ class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection
   private var isMuted = false
   private var handle: HashMap<String, String>? = null
   private val ctx: Context
-  val TAG = "CallConnection"
 
   init {
     this.handle = handle

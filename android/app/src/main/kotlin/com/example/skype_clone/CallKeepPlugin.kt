@@ -1,47 +1,65 @@
 package com.example.skype_clone
 
+import android.app.Activity
 import android.content.Context
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.PluginRegistry
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.*
 
-class CallKeepPlugin : EventChannel.StreamHandler, FlutterPlugin {
-    private lateinit var eventChannel: EventChannel
+class CallKeepPlugin : FlutterPlugin, ActivityAware {
+   private var callKeepHandler: CallKeep? = null
 
     companion object {
-        private var mEventSink: EventChannel.EventSink? = null
         private const val EVENT_CHANNEL = "com.example.skype_clone/call_event"
+        private const val METHOD_CHANNEL = "com.exmaple.skype_clone/call"
         private var status: Boolean = false
         @JvmStatic
         fun registerWith(registrar: PluginRegistry.Registrar) {
-            CallKeepPlugin().apply {
-                initPlugin(registrar.context(), registrar.messenger())
-            }
+            val eventChannel = EventChannel(registrar.messenger(), EVENT_CHANNEL)
+            val methodChannel = MethodChannel(registrar.messenger(), METHOD_CHANNEL)
+
+            val plugin = CallKeep(methodChannel, eventChannel, registrar.context().applicationContext)
+            plugin.currentActivity = registrar.activity()
             status = true
         }
 
-        fun getStatu(): Boolean {
+        fun getStatus(): Boolean {
             return status
         }
     }
 
-    private fun initPlugin(context: Context, binaryMessenger: BinaryMessenger){
-        eventChannel = EventChannel(binaryMessenger, EVENT_CHANNEL)
-        eventChannel.setStreamHandler(this)
-    }
-
-    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-        mEventSink = events
-    }
-
-    override fun onCancel(arguments: Any?) {}
-
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        initPlugin(binding.applicationContext, binding.binaryMessenger)
+        val eventChannel = EventChannel(binding.binaryMessenger, EVENT_CHANNEL)
+        val methodChannel = MethodChannel(binding.binaryMessenger, METHOD_CHANNEL)
+        val plugin = CallKeep(methodChannel, eventChannel, binding.applicationContext)
+
+        callKeepHandler = plugin
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        eventChannel.setStreamHandler(null)
+        callKeepHandler?.stopListening()
+        callKeepHandler = null
     }
+
+    override  fun onAttachedToActivity(binding: ActivityPluginBinding){
+        val plugin = callKeepHandler ?: return
+
+        callKeepHandler?.currentActivity = binding.activity
+    }
+
+    override fun onDetachedFromActivity() {
+        callKeepHandler?.currentActivity = null
+    }
+
+
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        onAttachedToActivity(binding)
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() {
+        onDetachedFromActivity()
+    }
+
 }

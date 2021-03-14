@@ -18,9 +18,9 @@ import com.example.skype_clone.R
 import com.example.skype_clone.callkeep.Constants.EXTRA_CALLER_NAME
 import com.example.skype_clone.callkeep.Constants.SKYPE_PREF
 
-class IncomingCallActivity : FragmentActivity() {
-    private val TAG = "IncomingCallActivity"
+private const val TAG = "IncomingCallActivity"
 
+class IncomingCallActivity : FragmentActivity() {
     private var sharedPreferences: SharedPreferences? = null
     private var username: String? = null
     private var callUser: String? = null
@@ -80,7 +80,7 @@ class IncomingCallActivity : FragmentActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     fun acceptCall(view: View?) {
         Log.d(TAG, "acceptCall")
-        CallKeepPlugin.getStatu()
+        CallKeepPlugin.getStatus()
     }
 
     /**

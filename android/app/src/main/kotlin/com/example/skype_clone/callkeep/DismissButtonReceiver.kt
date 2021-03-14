@@ -9,9 +9,10 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 
+private const val TAG = "DismissButtonReceiver"
+
 @RequiresApi(Build.VERSION_CODES.M)
 class DismissButtonReceiver: BroadcastReceiver() {
-    private val TAG = "DismissButtonReceiver"
     private var notifyManager: NotificationManager? = null
 
     override fun onReceive(context: Context?, intent: Intent?) {

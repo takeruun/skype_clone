@@ -1,4 +1,4 @@
-package com.example.skype_clone
+package com.example.skype_clone.callkeep
 
 import android.app.ActivityManager
 import android.content.Context
@@ -12,7 +12,13 @@ import android.util.Log
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import io.wazo.callkeep.Constants.*
+import com.example.skype_clone.callkeep.Constants.EXTRA_CALLER_NAME
+import com.example.skype_clone.callkeep.Constants.EXTRA_CALL_NUMBER
+import com.example.skype_clone.callkeep.Constants.EXTRA_CALL_UUID
+import com.example.skype_clone.callkeep.Constants.ACTION_AUDIO_SESSION
+import com.example.skype_clone.callkeep.Constants.ACTION_CHECK_REACHABILITY
+import com.example.skype_clone.callkeep.Constants.ACTION_ONGOING_CALL
+import com.example.skype_clone.callkeep.Constants.ACTION_WAKE_APP
 import java.util.*
 import kotlin.collections.HashMap
 

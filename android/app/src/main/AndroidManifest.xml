@@ -7,7 +7,7 @@
         android:name=".Application"
         android:icon="@mipmap/ic_launcher"
         android:label="skype_clone">
-        <activity android:name=".IncomingCallActivity" />
+        <activity android:name=".callkeep.IncomingCallActivity" />
 
         <activity
             android:name=".MainActivity"
@@ -56,7 +56,7 @@
             android:value="2" />
 
         <receiver
-            android:name=".DismissButtonReceiver"
+            android:name=".callkeep.DismissButtonReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -65,11 +65,11 @@
         </receiver>
 
         <service
-            android:name=".RingSoundService"
+            android:name=".callkeep.RingSoundService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".CallConnectionService"
+            android:name=".callkeep.CallConnectionService"
             android:label="CallConnect"
             android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
             <intent-filter>

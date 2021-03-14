@@ -1,12 +1,10 @@
-package com.example.skype_clone
+package com.example.skype_clone.callkeep
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.media.AudioAttributes
-import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,7 +18,15 @@ import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import io.wazo.callkeep.Constants.*
+import com.example.skype_clone.R
+import com.example.skype_clone.callkeep.Constants.ACTION_ANSWER_CALL
+import com.example.skype_clone.callkeep.Constants.ACTION_AUDIO_SESSION
+import com.example.skype_clone.callkeep.Constants.ACTION_END_CALL
+import com.example.skype_clone.callkeep.Constants.ACTION_HOLD_CALL
+import com.example.skype_clone.callkeep.Constants.ACTION_UNHOLD_CALL
+import com.example.skype_clone.callkeep.Constants.EXTRA_CALLER_NAME
+import com.example.skype_clone.callkeep.Constants.EXTRA_CALL_NUMBER
+import com.example.skype_clone.callkeep.Constants.EXTRA_CALL_UUID
 
 @RequiresApi(Build.VERSION_CODES.M)
 class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection() {
@@ -155,7 +161,7 @@ class CallConnection(ctx: Context, handle: HashMap<String, String>) : Connection
     sendCallRequestToActivity(ACTION_END_CALL, handle)
     Log.d(TAG, "onReject executed")
     try {
-     CallConnectionService.deinitConnection(handle?.get(EXTRA_CALL_UUID))
+      CallConnectionService.deinitConnection(handle?.get(EXTRA_CALL_UUID))
     } catch (exception: Throwable) {
       Log.e(TAG, "Handle map error", exception)
     }

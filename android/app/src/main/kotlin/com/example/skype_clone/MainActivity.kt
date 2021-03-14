@@ -13,7 +13,7 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         val shimPluginRegistry = ShimPluginRegistry(flutterEngine)
-        CallEventPlugin.registerWith(shimPluginRegistry.registrarFor("com.example.skype_clone.CallEventPlugin"))
+        CallKeepPlugin.registerWith(shimPluginRegistry.registrarFor("com.example.skype_clone.CallKeepPlugin"))
     }
 
 }

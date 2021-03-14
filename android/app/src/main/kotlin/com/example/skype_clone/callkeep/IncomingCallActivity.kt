@@ -1,13 +1,8 @@
-package com.example.skype_clone
+package com.example.skype_clone.callkeep
 
-import android.app.ActivityManager
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import android.media.Ringtone
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -16,11 +11,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
-import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
-import io.flutter.app.FlutterActivity
-import io.wazo.callkeep.Constants
+import com.example.skype_clone.CallKeepPlugin
+import com.example.skype_clone.R
+import com.example.skype_clone.callkeep.Constants.EXTRA_CALLER_NAME
+import com.example.skype_clone.callkeep.Constants.SKYPE_PREF
 
 class IncomingCallActivity : FragmentActivity() {
     private val TAG = "IncomingCallActivity"
@@ -39,7 +35,7 @@ class IncomingCallActivity : FragmentActivity() {
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
-        sharedPreferences = this.getSharedPreferences(com.example.skype_clone.Constants.SKYPE_PREF, Context.MODE_PRIVATE)
+        sharedPreferences = this.getSharedPreferences(SKYPE_PREF, Context.MODE_PRIVATE)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_incoming_call)
@@ -48,7 +44,7 @@ class IncomingCallActivity : FragmentActivity() {
         // set this flag so this activity will stay in front of the keyguard
         val flags = WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
         window.addFlags(flags)
-        callUser = sharedPreferences!!.getString(Constants.EXTRA_CALLER_NAME, "caller nameq")
+        callUser = sharedPreferences!!.getString(EXTRA_CALLER_NAME, "caller name")
 
         Log.wtf(TAG, "username: $username")
         Log.wtf(TAG, "callUser: $callUser")
@@ -84,7 +80,7 @@ class IncomingCallActivity : FragmentActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     fun acceptCall(view: View?) {
         Log.d(TAG, "acceptCall")
-        CallEventPlugin.getStatu()
+        CallKeepPlugin.getStatu()
     }
 
     /**

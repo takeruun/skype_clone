@@ -6,7 +6,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.PluginRegistry
 
-class CallEventPlugin : EventChannel.StreamHandler, FlutterPlugin {
+class CallKeepPlugin : EventChannel.StreamHandler, FlutterPlugin {
     private lateinit var eventChannel: EventChannel
 
     companion object {
@@ -15,7 +15,7 @@ class CallEventPlugin : EventChannel.StreamHandler, FlutterPlugin {
         private var status: Boolean = false
         @JvmStatic
         fun registerWith(registrar: PluginRegistry.Registrar) {
-            CallEventPlugin().apply {
+            CallKeepPlugin().apply {
                 initPlugin(registrar.context(), registrar.messenger())
             }
             status = true

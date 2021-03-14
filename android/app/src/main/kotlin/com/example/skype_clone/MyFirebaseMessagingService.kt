@@ -13,11 +13,13 @@ import android.telecom.TelecomManager
 import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.skype_clone.Constants.SKYPE_PREF
+import com.example.skype_clone.callkeep.CallConnectionService
+import com.example.skype_clone.callkeep.Constants.EXTRA_CALLER_NAME
+import com.example.skype_clone.callkeep.Constants.EXTRA_CALL_NUMBER
+import com.example.skype_clone.callkeep.Constants.EXTRA_CALL_UUID
+import com.example.skype_clone.callkeep.Constants.SKYPE_PREF
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import io.wazo.callkeep.Constants
-
 
 private const val TAG = "MyFirebaseMsgService"
 
@@ -41,14 +43,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
       val extras = Bundle()
       val uri = Uri.fromParts(PhoneAccount.SCHEME_TEL, "09022334455", null)
       extras.putParcelable(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, uri)
-      extras.putString(Constants.EXTRA_CALLER_NAME, "THEOESP")
-      extras.putString(Constants.EXTRA_CALL_UUID, "019100-192819")
+      extras.putString(EXTRA_CALLER_NAME, "THEOESP")
+      extras.putString(EXTRA_CALL_UUID, "019100-192819")
 
       sharedPreferences = applicationContext.getSharedPreferences(SKYPE_PREF, Context.MODE_PRIVATE)
       val editor = sharedPreferences!!.edit()
-      editor.putString(Constants.EXTRA_CALL_NUMBER, "09022334455")
-      editor.putString(Constants.EXTRA_CALLER_NAME, "THEOESP")
-      editor.putString(Constants.EXTRA_CALL_UUID, "019100-192819")
+      editor.putString(EXTRA_CALL_NUMBER, "09022334455")
+      editor.putString(EXTRA_CALLER_NAME, "THEOESP")
+      editor.putString(EXTRA_CALL_UUID, "019100-192819")
       editor.apply()
 
       telecomManager!!.addNewIncomingCall(phoneAccountHandle, extras)

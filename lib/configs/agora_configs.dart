@@ -1,1 +1,4 @@
-const String APP_ID = 'bf8d802037b641c4a6091c63305a5bbf';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+String key = env['AGORA_API_KEY'];
+String APP_ID = key;

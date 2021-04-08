@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:provider/provider.dart';
 import 'package:skype_clone/provider/image_upload_provider.dart';
@@ -69,6 +70,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  static const METHOD_CHANNEL_NAME = "com.example.skype_clone/call";
+  static const METHOD_EVENT_NAME = "com.example.skype_clone/call_event";
+  static const _methodChannel = const MethodChannel(METHOD_CHANNEL_NAME);
+  static const _eventChannel = const EventChannel(METHOD_EVENT_NAME);
+
   AuthMethods _authMethods = AuthMethods();
 
   @override
@@ -94,6 +100,10 @@ class _MyAppState extends State<MyApp> {
           ),
         );
       }
+    });
+
+    _eventChannel.receiveBroadcastStream().listen((event) {
+      print("EVENT CHANNEL $event");
     });
 
     super.initState();

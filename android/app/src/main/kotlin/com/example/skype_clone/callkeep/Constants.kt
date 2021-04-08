@@ -1,0 +1,26 @@
+package com.example.skype_clone.callkeep
+
+object Constants {
+    const val ACTION_ANSWER_CALL = "ACTION_ANSWER_CALL"
+    const val ACTION_AUDIO_SESSION = "ACTION_AUDIO_SESSION"
+    const val ACTION_CHECK_REACHABILITY = "ACTION_CHECK_REACHABILITY"
+    const val ACTION_DTMF_TONE = "ACTION_DTMF_TONE"
+    const val ACTION_END_CALL = "ACTION_END_CALL"
+    const val ACTION_HOLD_CALL = "ACTION_HOLD_CALL"
+    const val ACTION_MUTE_CALL = "ACTION_MUTE_CALL"
+    const val ACTION_ONGOING_CALL = "ACTION_ONGOING_CALL"
+    const val ACTION_UNHOLD_CALL = "ACTION_UNHOLD_CALL"
+    const val ACTION_UNMUTE_CALL = "ACTION_UNMUTE_CALL"
+    const val ACTION_WAKE_APP = "ACTION_WAKE_APP"
+    const val EXTRA_CALL_NUMBER = "EXTRA_CALL_NUMBER"
+    const val EXTRA_CALL_UUID = "EXTRA_CALL_UUID"
+    const val EXTRA_CALLER_NAME = "EXTRA_CALLER_NAME"
+    const val INCOMING_CALL = "INCOMING_CALL"
+    const val INCOMING_CALL_RESULT = "INCOMING_CALL_RESULT"
+    const val DISPLAY_NAME = "DISPLAY_NAME"
+    const val CALL_ID = "CALL_ID"
+    const val WITH_VIDEO = "WITH_VIDEO"
+    const val CALL_ANSWERED = 1
+
+    const val SKYPE_PREF = "SKYPE_PREF"
+}
